@@ -1,0 +1,7 @@
+
+ToDo: 
+- declaration of variables locally 
+(if exported: "export VAR" has to be available to child process)
+- flags for export
+- what about function declatations? (if we implement they also need to be 
+removed by unset)
