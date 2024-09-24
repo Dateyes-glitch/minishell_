@@ -1,0 +1,17 @@
+for export:
+either view variables created with export in current shell environment if cmd struct includes more than 1 arguement
+either add variables in env_list if cmd->args has extra arguments
+if only export as cmd and no further arguements then
+->display all variables that have been created with export
+else
+->add_to_list
+
+for env:
+->print_list
+
+for unset:
+->remove_list
+
+for cd:
+->only supposed to run with relative or absolute path
+->when relative or absolute path is given update value of KEY=VALUE pair env var that should be updated ie OLDPWD and PWD
