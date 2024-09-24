@@ -118,9 +118,9 @@ void dup_to_stdo(Command *cmd)
     free(executable_path);
 }
 
-int execute_command_node(Command *cmd, builtin_cmd_t *builtins) 
+int execute_command_node(Command *cmd, builtin_cmd_t *builtins, envvar **env_list) 
 {
-    if (ft_execute_builtin(cmd, builtins))
+    if (ft_execute_builtin(cmd, builtins, env_list))
         return 1;
     else if (cmd->heredoc == 126)
     {
@@ -132,7 +132,7 @@ int execute_command_node(Command *cmd, builtin_cmd_t *builtins)
         return ft_execute_external(cmd->args, cmd);
 }
 
-void execute_pipeline(Command *cmd, builtin_cmd_t *builtins) 
+void execute_pipeline(Command *cmd, builtin_cmd_t *builtins, envvar **env_list) 
 {
     int pipe_fd[2];
     int input_fd = STDIN_FILENO;
@@ -148,7 +148,7 @@ void execute_pipeline(Command *cmd, builtin_cmd_t *builtins)
             if (current_cmd->next)
                 dup2(pipe_fd[1], STDOUT_FILENO);
             close(pipe_fd[0]);
-            execute_command_node(current_cmd, builtins);
+            execute_command_node(current_cmd, builtins, env_list);
             exit(EXIT_SUCCESS);
         }
         else if (pid > 0)
@@ -166,15 +166,15 @@ void execute_pipeline(Command *cmd, builtin_cmd_t *builtins)
     }
 }
 
-int ft_execute_parsed_commands(Command *cmd, builtin_cmd_t *builtins) 
+int ft_execute_parsed_commands(Command *cmd, builtin_cmd_t *builtins, envvar **env_list) 
 {
     if (!cmd) return 1;
 
     if (!cmd->next) 
-        return execute_command_node(cmd, builtins); 
+        return execute_command_node(cmd, builtins, env_list); 
     else 
     {
-        execute_pipeline(cmd, builtins);
+        execute_pipeline(cmd, builtins, env_list);
         return 1;
     }
 }
@@ -186,17 +186,13 @@ void ft_run_shell(void)
     Command *commands;
     int status = 1;
     builtin_cmd_t builtins[NUM_BUILTINS];
-    list *environment = init_env();
+    envvar  *env_list = NULL;
+    // list *environment = init_env();
+    initialize_env(&env_list);
     ft_init_builtins(builtins);
 
     signal(SIGINT, handle_signal);
     signal(SIGQUIT, handle_signal);
-
-    while(environment->var != NULL && environment->var->key != NULL)
-    {
-        printf("%s=%s\n", environment->var->key, environment->var->value);
-        environment->var++;
-    }
 
     do 
     {
@@ -216,7 +212,7 @@ void ft_run_shell(void)
             continue;
         }
         commands = parse_pipeline(&tokens);
-        status = ft_execute_parsed_commands(commands, builtins);
+        status = ft_execute_parsed_commands(commands, builtins, &env_list);
 
         free_tokens(tokens);
         free_commands(commands);

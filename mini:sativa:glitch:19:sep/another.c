@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include "env_var.h"
 
 int main() 
 {
@@ -32,7 +33,7 @@ void ft_init_builtins(builtin_cmd_t *builtins)
     builtins[6].func = cmd_exit;
 }
 
-int ft_execute_builtin(Command *cmd,builtin_cmd_t *builtins) 
+int ft_execute_builtin(Command *cmd,builtin_cmd_t *builtins, envvar **env_list) 
 {
 
     if (!cmd->args || !cmd->args[0]) 
@@ -42,7 +43,7 @@ int ft_execute_builtin(Command *cmd,builtin_cmd_t *builtins)
     {
         if (strcmp(cmd->args[0], builtins[i].name) == 0)
         {
-            builtins[i].func(cmd);
+            builtins[i].func(cmd, env_list);
             return 1;
         }
         i++;
@@ -81,7 +82,8 @@ int ft_execute_external(char **args, Command *cmd) {
 }
 
 
-char *find_executable(char *command) {
+char *find_executable(char *command) 
+{
     char *path = getenv("PATH");
     if (!path) return NULL;
 
@@ -129,7 +131,7 @@ char *find_executable(char *command) {
 
 
 // Built-in command: cd
-int cmd_cd(Command *cmd) 
+int cmd_cd(Command *cmd, envvar **env_list) 
 {
     if (cmd->args[1] == NULL)
         write(STDERR_FILENO, "minishell: expected argument to \"cd\"\n", 38);
@@ -142,7 +144,7 @@ int cmd_cd(Command *cmd)
 }
 
 
-int cmd_echo(Command *cmd) {
+int cmd_echo(Command *cmd, envvar **env_list) {
     int i = 1;
     int newline = 1;
     int fd = 1;
@@ -167,7 +169,7 @@ int cmd_echo(Command *cmd) {
 }
 
 
-int cmd_pwd(Command *cmd) 
+int cmd_pwd(Command *cmd, envvar **env_list) 
 {
     char cwd[1024];
 
@@ -183,41 +185,44 @@ int cmd_pwd(Command *cmd)
 
 
 
-int cmd_export(Command *cmd) 
+int cmd_export(Command *cmd, envvar **env_list) 
 {
 
     if (cmd->args[1] == NULL)
-        write(STDERR_FILENO, "minishell: export: expected argument\n", 37);
+        display_export_vars(env_list);
     else
-        putenv(cmd->args[1]);
+        add_or_update_var(env_list, cmd->args[1], cmd->args[2]);
+    // VAR="VALUE" is splitted?
     return 1;
 }
 
 
 
-int cmd_unset(Command *cmd) 
+int cmd_unset(Command *cmd, envvar **env_list) 
 {
 
     if (cmd->args[1] == NULL) 
         write(STDERR_FILENO, "minishell: unset: expected argument\n", 36);
     else 
-        unsetenv(cmd->args[1]);
+        unset_env_var(env_list, cmd->args[1]);
+    // handle multiple vars: unset VAR1 VAR2 VAR3 ?
     return 1;
 }
 
 
-int cmd_env(Command *cmd) 
+int cmd_env(Command *cmd, envvar **env_list) 
 {
-    extern char **environ;
-    for (char **env = environ; *env; ++env) 
-    {
-        write(STDOUT_FILENO, *env, strlen(*env));
-        write(STDOUT_FILENO, "\n", 1);
-    }
+    display_export_vars(env_list);
+    // extern char **environ;
+    // for (char **env = environ; *env; ++env) 
+    // {
+    //     write(STDOUT_FILENO, *env, strlen(*env));
+    //     write(STDOUT_FILENO, "\n", 1);
+    // }
     return 1;
 }
 
-int cmd_exit(Command *cmd) 
+int cmd_exit(Command *cmd, envvar **env_list) 
 {
     exit(0);
 }

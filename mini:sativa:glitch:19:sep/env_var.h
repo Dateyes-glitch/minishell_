@@ -1,21 +1,27 @@
-#ifndef ENV_VAR
-#define ENV_VAR
-
-#include "minishell.h"
-
-typedef struct env_var
-{
-    char *key;
-    char *value;
-} node;
-
-typedef struct env_list
-{
-    node *var;
-    size_t count;
-} list;
-
-list *init_env(void);
+// #ifndef ENV_VAR_H
+// # define ENV_VAR_H
 
 
-#endif
+// # include "minishell.h"
+// # include <stdlib.h>
+// # include <stdio.h>
+// # include <string.h>
+
+// typedef struct envvar 
+// {
+//     char *key;
+//     char *value;
+//     int  export_flag;
+//     struct envvar *next;
+// }   envvar;
+
+// void    print_list(envvar *env_list);
+// void    add_to_list(envvar **env_list, char *key, char *value);
+// void    initialize_env(envvar **env_list);
+// void    add_or_update_var(envvar **env_list, char *key, char *value);
+// char    *get_env_var(envvar **env_list, char *key);
+// void    display_export_vars(envvar **env_list);
+// void    unset_env_var(envvar **env_list, char *key);
+// void    ft_free(envvar **env_list);
+
+// #endif

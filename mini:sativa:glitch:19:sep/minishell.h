@@ -1,6 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+#include "env_var.h"
 #include "tokens.h"
 #include "cmds.h"
 #include <stdio.h>
@@ -17,25 +18,44 @@
 #include <fcntl.h>
 
 
+
 #define NUM_BUILTINS 7
 #define BUF_SIZE 64
+
+typedef struct envvar 
+{
+    char *key;
+    char *value;
+    struct envvar *next;
+}   envvar;
 
 typedef struct builtin
 {
   char *name;
-  int(*func)(Command *cmd);
+  int(*func)(Command *cmd, envvar **env_list);
 } builtin_cmd_t;
+
+
+void    print_list(envvar *env_list);
+void    add_to_list(envvar **env_list, char *key, char *value);
+void    initialize_env(envvar **env_list);
+void    add_or_update_var(envvar **env_list, char *key, char *value);
+char    *get_env_var(envvar **env_list, char *key);
+void    display_export_vars(envvar **env_list);
+void    unset_env_var(envvar **env_list, char *key);
+void    ft_free(envvar **env_list);
+
 
 void ft_init_builtins(builtin_cmd_t *builtins);
 int ft_run_builtin(builtin_cmd_t *builtins, char **args);
-int cmd_cd(Command *cmd);
-int cmd_echo(Command *cmd);
-int cmd_pwd(Command *cmd);
-int cmd_export(Command *cmd);
-int cmd_unset(Command *cmd);
-int cmd_env(Command *cmd);
-int cmd_exit(Command *cmd);
-int ft_execute_builtin(Command *cmd, builtin_cmd_t *builtins);
+int cmd_cd(Command *cmd, envvar **env_list);
+int cmd_echo(Command *cmd, envvar **env_list);
+int cmd_pwd(Command *cmd, envvar **env_list);
+int cmd_export(Command *cmd, envvar **env_list);
+int cmd_unset(Command *cmd, envvar **env_list);
+int cmd_env(Command *cmd, envvar **env_list);
+int cmd_exit(Command *cmd, envvar **env_list);
+int ft_execute_builtin(Command *cmd, builtin_cmd_t *builtins, envvar **env_list);
 int ft_execute_external(char **args, Command *cmd);
 char *find_executable(char *command);
 char *ft_read_input(void);
