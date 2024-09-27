@@ -36,7 +36,7 @@ typedef struct builtin
 } builtin_cmd_t;
 
 
-void    print_list(envvar *env_list);
+void    display_env_vars(envvar **env_list);
 void    add_to_list(envvar **env_list, char *key, char *value);
 void    initialize_env(envvar **env_list);
 void    add_or_update_var(envvar **env_list, char *key, char *value);

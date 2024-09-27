@@ -121,13 +121,16 @@ Command *parse_pipeline(Token **tokens)
 void free_commands(Command *commands) 
 {
     Command *current = commands;
+
     while (current) 
     {
         Command *next = current->next;
         if (current->args) 
         {
             for (int i = 0; current->args[i]; i++)
+            {
                 free(current->args[i]);
+            }
             free(current->args);
         }
         if (current->input_file)

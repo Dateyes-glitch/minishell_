@@ -8,7 +8,7 @@ void    display_export_vars(envvar **env_list)
     current = *env_list;
     while (current)
     {
-        printf("%s%c%s\n", current->key, '=', current->value);
+        printf("declare -x %s%c%s\n", current->key, '=', current->value);
         current = current->next;
     }
 }
@@ -61,7 +61,7 @@ static void    update_env_var(envvar **env_list, char *key, char *value)
 void    add_or_update_var(envvar **env_list, char *key, char *value)
 {
     envvar *current;
-
+    
     current = *env_list;
     while (current)
     {

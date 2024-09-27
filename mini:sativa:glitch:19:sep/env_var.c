@@ -1,12 +1,15 @@
 
 #include "minishell.h"
 
-void    print_list(envvar *env_list)
+void    display_env_vars(envvar **env_list)
 {
-    while (env_list)
+    envvar *current;
+
+    current = *env_list;
+    while (current)
     {
-        printf("%s%c%s\n", env_list->key, '=', env_list->value);
-        env_list = env_list->next;
+        printf("%s%c%s\n", current->key, '=', current->value);
+        current = current->next;
     }
 }
 

@@ -187,12 +187,29 @@ int cmd_pwd(Command *cmd, envvar **env_list)
 
 int cmd_export(Command *cmd, envvar **env_list) 
 {
+    int i;
 
     if (cmd->args[1] == NULL)
         display_export_vars(env_list);
     else
+    {
+        i = 0;
+        char *equal_sign = strchr(cmd->args[1], '=');
+        while (cmd->args[1][i] != '=')
+            i++;
+        cmd->args[1] = strndup(cmd->args[1], (size_t)i);
+        char *value = equal_sign + 1;
+        if (*value == '"')
+        {
+            value++;
+            char *end_quote = strchr(value, '"');
+            if (end_quote != NULL)
+                *end_quote = '\0';
+        }
+        cmd->args[2] = strdup(value);
+        cmd->args[3] = NULL;
         add_or_update_var(env_list, cmd->args[1], cmd->args[2]);
-    // VAR="VALUE" is splitted?
+    }
     return 1;
 }
 
@@ -200,25 +217,52 @@ int cmd_export(Command *cmd, envvar **env_list)
 
 int cmd_unset(Command *cmd, envvar **env_list) 
 {
+    int i;
 
     if (cmd->args[1] == NULL) 
         write(STDERR_FILENO, "minishell: unset: expected argument\n", 36);
-    else 
+    else if (cmd->args[2] == NULL)
         unset_env_var(env_list, cmd->args[1]);
-    // handle multiple vars: unset VAR1 VAR2 VAR3 ?
+    else
+    {
+        i = 1;
+        while (cmd->args[i] != NULL)
+        {
+            unset_env_var(env_list, cmd->args[i]);
+            i++;
+        }
+    }
     return 1;
 }
 
 
 int cmd_env(Command *cmd, envvar **env_list) 
 {
-    display_export_vars(env_list);
-    // extern char **environ;
-    // for (char **env = environ; *env; ++env) 
-    // {
-    //     write(STDOUT_FILENO, *env, strlen(*env));
-    //     write(STDOUT_FILENO, "\n", 1);
-    // }
+    int i;
+    char *equal_sign;
+    char *value;
+    char *end_quote;
+
+    if (cmd->args[1] == NULL)
+        display_env_vars(env_list);
+    else
+    {
+        equal_sign = strchr(cmd->args[1], '=');
+        i = 0;
+        while (cmd->args[1][i] != '=')
+            i++;
+        cmd->args[1] = strndup(cmd->args[1], (size_t)i);
+        value = equal_sign + 1;
+        if (*value == '=')
+        {
+            value++;
+            end_quote = strchr(value, '"');
+            if (end_quote != NULL)
+                *end_quote = '\0';
+        }
+        cmd->args[2] = strdup(value);
+        cmd->args[3] = NULL;
+    }
     return 1;
 }
 
