@@ -33,7 +33,7 @@ void add_argument(Command *cmd, char *arg)
     cmd->args[count + 1] = NULL;
 }
 
-Command *parse_pipeline(Token **tokens)
+Command *parse_pipeline(Token **tokens, envvar **env_list)
 {
     Command *head = NULL;
     Command *tail = NULL;
@@ -57,7 +57,7 @@ Command *parse_pipeline(Token **tokens)
             current_token->value = strdup("heredoc_file.txt");
             current_token->type = TOKEN_WORD;
         }
-        if (current_token->type == TOKEN_WORD || current_token->type == TOKEN_QUOTE || current_token->type == TOKEN_DOUBLE_QUOTE) 
+        if (current_token->type == TOKEN_WORD || current_token->type == TOKEN_QUOTE || current_token->type == TOKEN_DOUBLE_QUOTE || current_token->type == TOKEN_ENV_VAR) 
         {
             // If there's no current command, start a new one
             if (!current_cmd) 
@@ -68,6 +68,14 @@ Command *parse_pipeline(Token **tokens)
                 else 
                     tail->next = current_cmd;
                 tail = current_cmd;
+            }
+            if (current_token->type == TOKEN_ENV_VAR)
+            {
+                char *env_value = get_env_var(env_list, current_token->value);
+                if (env_value)
+                    current_token->value = strdup(env_value);
+                else
+                    current_token->value = strdup("");
             }
             add_argument(current_cmd, current_token->value);
         } 

@@ -319,13 +319,14 @@ void ft_run_shell(void)
             free(input);
             continue;
         }
-        commands = parse_pipeline(&tokens);
+        commands = parse_pipeline(&tokens, &env_list);
         expand_variables(&commands, &env_list);
         status = ft_execute_parsed_commands(commands, builtins, &env_list);
 
         free_tokens(tokens);
         free_commands(commands);
         free(input);
+        ft_free(env_list);
     } while (status);
 
     // Clean up built-in command names

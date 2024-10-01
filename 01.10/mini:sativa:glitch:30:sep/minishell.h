@@ -22,6 +22,23 @@
 #define NUM_BUILTINS 7
 #define BUF_SIZE 64
 
+#define CMD_TYPE_SIMPLE 1
+#define CMD_TYPE_PIPELINE 2
+
+typedef struct Command 
+{
+    char **args;
+    char *input_file;
+    char *output_file;
+    int append; // For output redirection (1: append, 0: overwrite)
+    struct Command *next;
+    int heredoc;
+    char *heredoc_delim;
+} Command;
+
+
+
+
 typedef struct envvar 
 {
     char *key;
@@ -34,6 +51,11 @@ typedef struct builtin
   char *name;
   int(*func)(Command *cmd, envvar **env_list);
 } builtin_cmd_t;
+
+Command *new_command();
+void add_argument(Command *cmd, char *arg);
+Command *parse_pipeline(Token **tokens, envvar **env_list);
+void free_commands(Command *commands);
 
 
 void    display_env_vars(envvar **env_list);
@@ -65,6 +87,7 @@ int ft_execute_command(char **args, builtin_cmd_t *builtins);
 void ft_run_shell(void);
 char *ft_strdup(const char *s);
 void handle_redirections(Command *cmd);
+void    expand_variables(Command **cmds, envvar **env_list);
 
 # define    RESET      "\033[0m"
 # define    ITALIC       "\033[3m"
