@@ -1,0 +1,13 @@
+hello
+a.out
+another.c
+cmds.c
+cmds.h
+do.txt
+env_var.c
+env_var.h
+main.c
+minishell.h
+sandy.txt
+tokens.c
+tokens.h
