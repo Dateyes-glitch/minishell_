@@ -291,7 +291,7 @@ Token *tokenize_input(char *input)
             if (input[i] == '\'' || (input[i] != ' ' && input[i] != '\t' && input[i] != '\0'))
             {
                 xtra = new_token(TOKEN_MERGE_FLAG,"YES");
-                printf("here\n");
+                //printf("here\n");
             }
         }
 

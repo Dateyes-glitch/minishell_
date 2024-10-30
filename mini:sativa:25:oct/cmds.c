@@ -1,5 +1,27 @@
 #include "minishell.h"
 
+char *ft_strjoin(char *str1,char *str2)
+{
+    char *str_cp1 = (char *)str1;
+    char *str_cp2 = (char *)str2;
+    char *joined = (char *)malloc(sizeof(char) * (strlen(str_cp1) + strlen(str_cp2) + 1));
+    int i = 0;
+    int j = 0;
+    while(str_cp1[i])
+    {
+        joined[i] = str_cp1[i];
+        i++;
+    }
+    while(str_cp2[j])
+    {
+        joined[i + j] = str_cp2[j];
+        j++;
+    }
+    joined[i + j] = '\0';
+    return (char *)joined;
+
+}
+
 static int	ft_get_len(int n)
 {
 	int	len;

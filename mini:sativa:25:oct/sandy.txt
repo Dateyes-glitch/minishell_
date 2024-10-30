@@ -11,3 +11,4 @@ minishell.h
 sandy.txt
 tokens.c
 tokens.h
+hello
