@@ -48,7 +48,7 @@ int ft_execute_builtin(Command *cmd,builtin_cmd_t *builtins, envvar **env_list, 
         }
         i++;
     }
-    return 0;
+    return 1;
 }
 
 int ft_execute_external(char **args, Command *cmd) {
