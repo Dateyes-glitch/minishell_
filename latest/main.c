@@ -139,6 +139,7 @@ void execute_pipeline(Command *cmd, builtin_cmd_t *builtins, envvar **env_list, 
     pid_t pid;
     Command *current_cmd = cmd;
     int exit_status;
+    int overall_status = 0;
 
     while (current_cmd) 
     {
@@ -156,9 +157,15 @@ void execute_pipeline(Command *cmd, builtin_cmd_t *builtins, envvar **env_list, 
         {
             waitpid(pid, &exit_status, 0);
             if (WIFEXITED(exit_status))
-                e_status->last_exit_status = WEXITSTATUS(exit_status);
+            {
+                int cmd_exit_status = WEXITSTATUS(exit_status);
+                printf("status in process: %d\n", cmd_exit_status);
+                if (cmd_exit_status != 0)
+                    printf("here\n");
+                    overall_status = cmd_exit_status;
+            }
             else
-                e_status->last_exit_status = 1;
+                overall_status = 1;
             close(pipe_fd[1]);
             input_fd = pipe_fd[0];
         }
@@ -169,6 +176,8 @@ void execute_pipeline(Command *cmd, builtin_cmd_t *builtins, envvar **env_list, 
         }
         current_cmd = current_cmd->next;
     }
+    printf("status: %i\n", overall_status);
+    e_status->last_exit_status = overall_status;
 }
 
 int ft_execute_parsed_commands(Command *cmd, builtin_cmd_t *builtins, envvar **env_list, shell_status *e_status, unset_path_flag *unset_flag) 

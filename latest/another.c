@@ -53,6 +53,7 @@ int ft_execute_builtin(Command *cmd,builtin_cmd_t *builtins, envvar **env_list, 
 
 int ft_execute_external(char **args, Command *cmd) {
     char *executable_path;
+    int exit_status = 0;
     if (strrchr(cmd->args[0],'/') != NULL)
     {
         char *save = strrchr(cmd->args[0], '/');
@@ -83,7 +84,10 @@ int ft_execute_external(char **args, Command *cmd) {
         exit(EXIT_FAILURE);
     }
     else if (pid > 0) 
+    {
         wait(NULL);
+      //  waitpid(pid, )
+    }
     else 
         perror("minishell: fork");
 
