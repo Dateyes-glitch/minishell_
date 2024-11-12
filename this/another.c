@@ -53,6 +53,7 @@ int ft_execute_builtin(Command *cmd,builtin_cmd_t *builtins, envvar **env_list, 
 
 int ft_execute_external(char **args, Command *cmd) {
     char *executable_path;
+    extern char **environ;
     if (strrchr(cmd->args[0],'/') != NULL)
     {
         char *save = strrchr(cmd->args[0], '/');
@@ -76,7 +77,7 @@ int ft_execute_external(char **args, Command *cmd) {
     pid_t pid = fork();
     if (pid == 0) 
     { 
-        char *envp[] = {NULL};
+        char **envp = environ;
         handle_redirections(cmd);
         execve(executable_path, args, envp);
         perror("execve"); 
