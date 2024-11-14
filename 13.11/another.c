@@ -228,7 +228,7 @@ int cmd_echo(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shell
         if (i > 1) write(fd, " ", 1); 
         write(fd, cmd->args[i], strlen(cmd->args[i]));
     }
-    
+    e_status->last_exit_status = 0;
     if (newline) write(fd, "\n", 1);
     return 1;
 }
@@ -279,6 +279,7 @@ int cmd_export(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, she
         cmd->args[3] = NULL;
         add_or_update_var(env_list, cmd->args[1], cmd->args[2],unset_flag);
     }
+    e_status->last_exit_status = 0;
     return 1;
 }
 
@@ -339,6 +340,7 @@ int cmd_env(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shell_
         cmd->args[2] = strdup(value);
         cmd->args[3] = NULL;
     }
+
     return 1;
 }
 
@@ -353,12 +355,15 @@ char *ft_read_input(void)
     while (1)
     {
         input = readline("minishell> ");
-        if (input == NULL || *input == '\0')
+        if (/*input == NULL ||*/ *input == '\0')
         {
             rl_on_new_line();
             rl_replace_line("", 0);
             rl_redisplay();
         }
+        if (input == NULL)
+            exit(0);
+        // free?? (Seg fault)
         if (*input)
         {
             add_history(input);
