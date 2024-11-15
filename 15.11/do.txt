@@ -1,0 +1,8 @@
+->add variable 
+->remove variable
+->change variable value
+->free func
+->convert struct to KEY=VALUE for env of external executables
+->add env_var list struct to command struct
+    ->either for command specific variable assignments 
+    ->also for easy access not changing all the places in the code where env_var is going to be used
