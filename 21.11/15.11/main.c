@@ -129,7 +129,17 @@ int execute_command_node(Command *cmd, builtin_cmd_t *builtins, envvar **env_lis
         return 0;
     }
     else
+    {
+        if (unset_flag->flag == 1)
+        {
+            write(STDERR_FILENO, "minishell: command not found: ", 30);
+            write(STDERR_FILENO, cmd->args[0], strlen(cmd->args[0]));
+            write(STDERR_FILENO, "\n", 1);
+            e_status->last_exit_status = 127;
+            return 0;
+        }
         return ft_execute_external(cmd->args, cmd, e_status);
+    }
 }
 
 void execute_pipeline(Command *cmd, builtin_cmd_t *builtins, envvar **env_list, shell_status *e_status, unset_path_flag *unset_flag) 
@@ -339,7 +349,6 @@ void ft_run_shell(void)
         commands = parse_pipeline(&tokens, &env_list, &e_status);
         //expand_variables(&commands, &env_list);
         status = ft_execute_parsed_commands(commands, builtins, &env_list, &e_status, &unset_flag);
-
         free_tokens(tokens);
         free_commands(commands);
         free(input);

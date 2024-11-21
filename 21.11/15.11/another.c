@@ -56,6 +56,7 @@ int ft_execute_external(char **args, Command *cmd, shell_status *e_status)
     char *executable_path;
     extern char **environ;
     int exit_status = 0;
+
     if (strrchr(cmd->args[0],'/') != NULL)
     {
         char *save = strrchr(cmd->args[0], '/');
@@ -238,7 +239,12 @@ int cmd_pwd(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shell_
 {
     char cwd[1024];
 
-    if (getcwd(cwd, sizeof(cwd)) != NULL) 
+    if (cmd->args[1] != NULL)
+    {
+        write(STDERR_FILENO, "pwd: too many arguments\n", 25);
+        e_status->last_exit_status = 1;
+    }
+    else if (getcwd(cwd, sizeof(cwd)) != NULL) 
     {
         write(STDOUT_FILENO, cwd, strlen(cwd));
         write(STDOUT_FILENO, "\n", 1);
@@ -280,6 +286,7 @@ int cmd_export(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, she
         add_or_update_var(env_list, cmd->args[1], cmd->args[2],unset_flag);
     }
     e_status->last_exit_status = 0;
+    printf("here\n");
     return 1;
 }
 
@@ -293,11 +300,6 @@ int cmd_unset(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shel
     {
         write(STDERR_FILENO, "minishell: unset: expected argument\n", 36);
         e_status->last_exit_status = 1;
-    }
-    else if (cmd->args[2] == NULL)
-    {
-        unset_env_var(env_list, cmd->args[1], unset_flag);
-        e_status->last_exit_status = 0;
     }
     else
     {
@@ -320,7 +322,9 @@ int cmd_env(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shell_
     char *value;
     char *end_quote;
 
-    if (cmd->args[1] == NULL)
+    if (unset_flag->flag == 1)
+        write(STDERR_FILENO, "minishell: command not found: env\n", 35);
+    else if (cmd->args[1] == NULL)
         display_env_vars(env_list, unset_flag);
     else
     {
@@ -345,7 +349,14 @@ int cmd_env(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shell_
 
 int cmd_exit(Command *cmd, envvar **env_list, unset_path_flag *unset_flag, shell_status *e_status) 
 {
-    exit(0);
+    if (cmd->args[1] == NULL || (cmd->args[1] != NULL && cmd->args[2] == NULL)) 
+        exit(0);
+    else
+    {
+        write(STDERR_FILENO, "exit: too many arguments\n", 26);
+        e_status->last_exit_status = 1;
+        return 1;
+    }
 }
 
 char *ft_read_input(void) 
