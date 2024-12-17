@@ -391,6 +391,8 @@ void ft_run_shell(void)
     builtin_cmd_t builtins[NUM_BUILTINS];
     envvar  *env_list = NULL;
     shell_status e_status;
+    e_status.last_exit_status = 0;
+    //printf("%i\n", e_status.last_exit_status);
     unset_path_flag unset_flag;
 
     unset_flag.flag = 0;

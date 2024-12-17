@@ -183,6 +183,7 @@ int cmd_echo(Command *cmd, envvar **env_list, unset_path_flag *unset_flag)
     int newline = 1;
     int fd = 1;
 
+    //printf("%i\n", cmd->exit_status.last_exit_status);
     if (cmd->output_file != NULL && cmd->append == 0)
         fd = open(cmd->output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (cmd->append != 0)

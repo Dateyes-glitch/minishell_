@@ -242,8 +242,6 @@ Token *tokenize_input(char *input)
                 return new_t = new_token(TOKEN_ERROR, "Unclosed double quote");
             else
                 i++;
-            char quote_char = input[i];
-            i++;
             /*
             int start = i;
 

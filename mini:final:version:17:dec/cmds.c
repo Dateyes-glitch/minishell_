@@ -139,6 +139,7 @@ Command *new_command()
     cmd->next = NULL;
     cmd->heredoc = 0;
     cmd->heredoc_delim = NULL;
+    cmd->exit_status.last_exit_status = 0;
     return cmd;
 }
 
