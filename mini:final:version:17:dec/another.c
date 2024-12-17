@@ -211,7 +211,11 @@ int cmd_pwd(Command *cmd, envvar **env_list, unset_path_flag *unset_flag)
 {
     char cwd[1024];
 
-    if (getcwd(cwd, sizeof(cwd)) != NULL) 
+    if (cmd->args[1] != NULL)
+    {
+        printf("ERR:Too many arguements");
+    }
+    else if (getcwd(cwd, sizeof(cwd)) != NULL) 
     {
         write(STDOUT_FILENO, cwd, strlen(cwd));
         write(STDOUT_FILENO, "\n", 1);

@@ -139,7 +139,6 @@ Command *new_command()
     cmd->next = NULL;
     cmd->heredoc = 0;
     cmd->heredoc_delim = NULL;
-    cmd->exit_status.last_exit_status = 0;
     return cmd;
 }
 
@@ -257,9 +256,10 @@ Command *parse_pipeline(Token **tokens, envvar **env_list, shell_status *e_statu
                 //free(merge_seq);
                 //current_token->value = ft_strjoin(current_token->value, current_token->next->next->value);
             }
-            while(current_token->type == TOKEN_WORD && current_token->next!=NULL && current_token->next->type == TOKEN_DOUBLE_MERGE && current_token->next->next!=NULL)
+            while((current_token->type == TOKEN_WORD || current_token->type == TOKEN_EXIT_STATUS) && current_token->next!=NULL && current_token->next->type == TOKEN_DOUBLE_MERGE && current_token->next->next!=NULL)
             {
-                char *merge_seq = ft_strjoin(current_token->value, current_token->next->next->value);
+                char *merge_seq;
+                merge_seq = ft_strjoin(current_token->value, current_token->next->next->value);
                 current_token = current_token->next->next;
                 current_token->value = strdup(merge_seq);
                 current_token->type = TOKEN_WORD;

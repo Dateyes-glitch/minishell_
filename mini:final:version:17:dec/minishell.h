@@ -38,7 +38,6 @@ typedef struct Command
 	char			**args;
 	char			*input_file;
 	char			*output_file;
-	shell_status exit_status;
 	int append; // For output redirection (1: append, 0: overwrite)
 	struct Command	*next;
 	int				heredoc;

@@ -420,7 +420,7 @@ void ft_run_shell(void)
             free(input);
             continue;
         }
-        commands = parse_pipeline(&tokens, &env_list, &e_status);
+        commands = parse_pipeline (&tokens, &env_list, &e_status);
         //expand_variables(&commands, &env_list);
         status = ft_execute_parsed_commands(commands, builtins, &env_list, &e_status, &unset_flag);
 
