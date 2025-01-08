@@ -1,0 +1,5 @@
+--include token ./ for directories
+--include ./ for executables if they have valid permissions use execve
+--completely fix quotes now focus on single and env variables how they are interpreted inside the double quotes maybe uncomment 
+the part with the env_var interpretation inside the double quotes
+--exit status fix where is it initialized;
