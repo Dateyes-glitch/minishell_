@@ -227,7 +227,7 @@ Command *parse_pipeline(Token **tokens, envvar **env_list, shell_status *e_statu
                     current_token->value = strdup(env_value);
                 else
                     current_token->value = strdup("");
-                if (!current_cmd->args)
+                if (!current_cmd->args && env_value)
                     current_cmd->env_exp = strdup(env_value);
             }
             if (current_token->type == TOKEN_EXIT_STATUS)

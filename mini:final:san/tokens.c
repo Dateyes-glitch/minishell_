@@ -214,8 +214,11 @@ Token *tokenize_input(char *input)
                     //     append_token(&head, &tail, xtra_merg);
                     // }
                     append_token(&head, &tail, new_t);
-                    printf("dqc: %i\n", double_quote_count);
-                    printf("i: %c\n", input[i]);
+                    if (double_quote_count % 2 != 0 && input[i] != '\0' && isspace(input[i]))
+                    {
+                        Token *xtramerge = new_token(TOKEN_MERGE_FLAG, "YES");
+                        append_token(&head, &tail, xtramerge);
+                    }
                     if (input[i] != '\0' && !isspace(input[i]))
                     {
                         merge_token = new_token(TOKEN_MERGE_FLAG, "YES");
