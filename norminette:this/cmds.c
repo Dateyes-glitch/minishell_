@@ -227,13 +227,15 @@ Command *parse_pipeline(Token **tokens, envvar **env_list, shell_status *e_statu
             {
                 current_token->value = ft_itoa(e_status->last_exit_status);
             }
-            if (current_token->next && current_token->next->type == TOKEN_MERGE_FLAG) {
+            while (current_token->next && current_token->next->type == TOKEN_MERGE_FLAG) {
                 char *merged_arg = strdup(current_token->value);
                 current_token = current_token->next->next; // Move to the token after the merge flag
-                
+               
+                if(current_token->type == TOKEN_EXIT_STATUS)
+                    current_token->value = ft_itoa(e_status->last_exit_status);
                 // Concatenate the next token's value to merged_arg
                 char *temp = merged_arg;
-                merged_arg = ft_strjoin(merged_arg, current_token->value);
+                merged_arg = ft_strjoin(temp, current_token->value);
                 free(temp);
 
                 // Update the current token with the merged value and change its type

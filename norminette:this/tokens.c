@@ -207,6 +207,12 @@ Token *tokenize_input(char *input)
                     word = NULL;
                 }
                 if (new_t != NULL) {
+                    if (space == 0)
+                    {
+                        printf("hereeee");
+                        Token *xtra_merg = new_token(TOKEN_MERGE_FLAG, "YES");
+                        append_token(&head, &tail, xtra_merg);
+                    }
                     append_token(&head, &tail, new_t);
                     if (input[i] != '\0' && !isspace(input[i]))
                     {
@@ -217,6 +223,7 @@ Token *tokenize_input(char *input)
             } else {
                 append_char(&word, input[i]); // Include $ in the word if followed by a double quote
                 i++;
+                space = 0;
             }
         }
         else 
