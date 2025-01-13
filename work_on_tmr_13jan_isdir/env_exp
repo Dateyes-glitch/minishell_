@@ -1,0 +1,1 @@
+if (current_token- == TOKEN_ENV_VAR) { char *env_value = get_env_var(env_list, current_token- if (env_value) current_token- = strdup(env_value); else current_token- = strdup(dontadd); if (!current_cmd- && env_value) current_cmd- = strdup(env_value); if (!env_value) current_cmd- = strdup(:still:); }
